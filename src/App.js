@@ -17,7 +17,8 @@ function App() {
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
-
+  var inputsDisabled = false;
+  
   // shuffle cards 
   const shuffleCards = () => {
     const shuffleCards = [...cardImages, ... cardImages]
@@ -26,10 +27,11 @@ function App() {
   
     setCards(shuffleCards);
     setTurns(0);
+    resetChoices();
   }
 
   const handleChoice = (card) => {
-    if (card.matched) { //ignore already matched cards
+    if (card.matched || inputsDisabled) { //ignore already matched cards
       return;
     }
     if (choiceOne == null) {
@@ -44,7 +46,7 @@ function App() {
 
 
   const onTurnOver = () => {
-      resetTurn();
+      
       if (choiceOne.src === choiceTwo.src) {
         //Flag cards as already matched
         setCards(prevCards => {
@@ -52,11 +54,14 @@ function App() {
               return card.src == choiceOne.src ? {...card, matched: true} : card           
             });
         })  
-        console.log("card match");
+        resetTurn();
         return;
       } 
-      console.log("card mismatch");
+      inputsDisabled = true;
+      setTimeout(() => resetTurn(), 1000)
   }
+  
+
 
   useEffect(() => {
     if (choiceOne && choiceTwo) {
@@ -64,13 +69,18 @@ function App() {
     }
   }, [choiceOne, choiceTwo])
 
-  //Resetting turn
-  const resetTurn = () => {
+  const resetChoices = () => {
       setChoiceOne(null);
       setChoiceTwo(null);
-      setTurns(prevTurns => prevTurns + 1)
   }
-
+  //Resetting turn
+  const resetTurn = () => {
+      resetChoices();
+      setTurns(prevTurns => prevTurns + 1)
+      inputsDisabled = false;
+  }
+  //Only runs at start
+  useEffect(shuffleCards, []);
   return (
     <div className="App">
       <h1>Match stuff</h1>  
@@ -84,6 +94,7 @@ function App() {
             />  
         ))}
       </div>
+      <p>Turns: {turns}</p>
     </div>
   );
 }
