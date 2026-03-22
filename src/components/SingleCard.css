@@ -1,0 +1,22 @@
+.card {
+    position : relative
+}
+
+.card img {
+    border: 2px solid #000;
+    display: block;
+    border-radius: 6px;
+    width: 256px;
+    height: 256px;
+}
+
+
+.card .front {
+    visibility: hidden;
+    position: absolute;
+}
+
+.flipped .front {
+    visibility: visible;
+    position: absolute;
+}
